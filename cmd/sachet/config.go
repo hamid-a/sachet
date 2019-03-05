@@ -8,6 +8,7 @@ import (
 	"github.com/messagebird/sachet/provider/exotel"
 	"github.com/messagebird/sachet/provider/freemobile"
 	"github.com/messagebird/sachet/provider/infobip"
+	"github.com/messagebird/sachet/provider/kavenegar"
 	"github.com/messagebird/sachet/provider/mediaburst"
 	"github.com/messagebird/sachet/provider/messagebird"
 	"github.com/messagebird/sachet/provider/nexmo"
@@ -44,6 +45,7 @@ var config struct {
 		FreeMobile  freemobile.Config
 		AspSms      aspsms.Config
 		Sipgate     sipgate.Config
+		Kavenegar   kavenegar.Config
 	}
 
 	Receivers []ReceiverConf

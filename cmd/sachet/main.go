@@ -16,6 +16,7 @@ import (
 	"github.com/messagebird/sachet/provider/exotel"
 	"github.com/messagebird/sachet/provider/freemobile"
 	"github.com/messagebird/sachet/provider/infobip"
+	"github.com/messagebird/sachet/provider/kavenegar"
 	"github.com/messagebird/sachet/provider/mediaburst"
 	"github.com/messagebird/sachet/provider/messagebird"
 	"github.com/messagebird/sachet/provider/nexmo"
@@ -174,6 +175,8 @@ func providerByName(name string) (sachet.Provider, error) {
 		return aspsms.NewAspSms(config.Providers.AspSms), nil
 	case "sipgate":
 		return sipgate.NewSipgate(config.Providers.Sipgate), nil
+	case "kavenegar":
+		return kavenegar.NewKavenegar(config.Providers.Kavenegar), nil
 	}
 
 	return nil, fmt.Errorf("%s: Unknown provider", name)

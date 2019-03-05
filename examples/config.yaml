@@ -2,6 +2,8 @@ providers:
   messagebird:
     access_key: 'live_qKwVZ02ULV70GqabBYxLU8d5r'
     debug: true
+  kavenegar:
+    api_key: 'xxx'
   nexmo:
     api_key: '18e0a6e9'
     api_secret: 'ea44c2d9'

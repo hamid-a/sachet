@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"github.com/messagebird/sachet/provider/tencentcloud"
 	"log"
 	"net/http"
 	"os"
@@ -11,23 +12,32 @@ import (
 	"strings"
 
 	"github.com/messagebird/sachet"
+	"github.com/messagebird/sachet/provider/aliyun"
 	"github.com/messagebird/sachet/provider/aspsms"
 	"github.com/messagebird/sachet/provider/cm"
 	"github.com/messagebird/sachet/provider/exotel"
 	"github.com/messagebird/sachet/provider/freemobile"
 	"github.com/messagebird/sachet/provider/infobip"
+	"github.com/messagebird/sachet/provider/kannel"
 	"github.com/messagebird/sachet/provider/kavenegar"
 	"github.com/messagebird/sachet/provider/mediaburst"
 	"github.com/messagebird/sachet/provider/messagebird"
 	"github.com/messagebird/sachet/provider/nexmo"
+	"github.com/messagebird/sachet/provider/nowsms"
 	"github.com/messagebird/sachet/provider/otc"
+	"github.com/messagebird/sachet/provider/ovh"
+	"github.com/messagebird/sachet/provider/pushbullet"
 	"github.com/messagebird/sachet/provider/sipgate"
+	"github.com/messagebird/sachet/provider/smsc"
 	"github.com/messagebird/sachet/provider/telegram"
 	"github.com/messagebird/sachet/provider/turbosms"
 	"github.com/messagebird/sachet/provider/twilio"
 
 	"github.com/prometheus/alertmanager/template"
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+
+	"github.com/heptiolabs/healthcheck"
 )
 
 var (
@@ -104,6 +114,7 @@ func main() {
 		message := sachet.Message{
 			To:   receiverConf.To,
 			From: receiverConf.From,
+			Type: receiverConf.Type,
 			Text: text,
 		}
 
@@ -115,7 +126,7 @@ func main() {
 		requestTotal.WithLabelValues("200", receiverConf.Provider).Inc()
 	})
 
-	http.Handle("/metrics", prometheus.Handler())
+	http.Handle("/metrics", promhttp.Handler())
 
 	http.HandleFunc("/-/reload", func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
@@ -129,9 +140,16 @@ func main() {
 		}
 	})
 
+	hc := healthcheck.NewMetricsHandler(prometheus.DefaultRegisterer, "sachet")
+
+	http.HandleFunc("/-/live", hc.LiveEndpoint)
+	http.HandleFunc("/-/ready", hc.ReadyEndpoint)
+
 	if os.Getenv("PORT") != "" {
 		*listenAddress = ":" + os.Getenv("PORT")
 	}
+
+	log.Printf("Listening on %s", *listenAddress)
 
 	log.Fatal(http.ListenAndServe(*listenAddress, nil))
 }
@@ -157,8 +175,12 @@ func providerByName(name string) (sachet.Provider, error) {
 		return twilio.NewTwilio(config.Providers.Twilio), nil
 	case "infobip":
 		return infobip.NewInfobip(config.Providers.Infobip), nil
+	case "kannel":
+		return kannel.NewKannel(config.Providers.Kannel), nil
 	case "turbosms":
 		return turbosms.NewTurbosms(config.Providers.Turbosms), nil
+	case "smsc":
+		return smsc.NewSmsc(config.Providers.Smsc), nil
 	case "exotel":
 		return exotel.NewExotel(config.Providers.Exotel), nil
 	case "cm":
@@ -175,6 +197,16 @@ func providerByName(name string) (sachet.Provider, error) {
 		return aspsms.NewAspSms(config.Providers.AspSms), nil
 	case "sipgate":
 		return sipgate.NewSipgate(config.Providers.Sipgate), nil
+	case "pushbullet":
+		return pushbullet.NewPushbullet(config.Providers.Pushbullet), nil
+	case "nowsms":
+		return nowsms.NewNowSms(config.Providers.NowSms), nil
+	case "aliyun":
+		return aliyun.NewAliyun(config.Providers.Aliyun)
+	case "ovh":
+		return ovh.NewOvh(config.Providers.OVH)
+	case "tencentcloud":
+		return tencentcloud.NewTencentCloud(config.Providers.TencentCloud)
 	case "kavenegar":
 		return kavenegar.NewKavenegar(config.Providers.Kavenegar), nil
 	}

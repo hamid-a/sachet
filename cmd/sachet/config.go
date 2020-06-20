@@ -1,19 +1,26 @@
 package main
 
 import (
+	"github.com/messagebird/sachet/provider/tencentcloud"
 	"io/ioutil"
 
+	"github.com/messagebird/sachet/provider/aliyun"
 	"github.com/messagebird/sachet/provider/aspsms"
 	"github.com/messagebird/sachet/provider/cm"
 	"github.com/messagebird/sachet/provider/exotel"
 	"github.com/messagebird/sachet/provider/freemobile"
 	"github.com/messagebird/sachet/provider/infobip"
+	"github.com/messagebird/sachet/provider/kannel"
 	"github.com/messagebird/sachet/provider/kavenegar"
 	"github.com/messagebird/sachet/provider/mediaburst"
 	"github.com/messagebird/sachet/provider/messagebird"
 	"github.com/messagebird/sachet/provider/nexmo"
+	"github.com/messagebird/sachet/provider/nowsms"
 	"github.com/messagebird/sachet/provider/otc"
+	"github.com/messagebird/sachet/provider/ovh"
+	"github.com/messagebird/sachet/provider/pushbullet"
 	"github.com/messagebird/sachet/provider/sipgate"
+	"github.com/messagebird/sachet/provider/smsc"
 	"github.com/messagebird/sachet/provider/telegram"
 	"github.com/messagebird/sachet/provider/turbosms"
 	"github.com/messagebird/sachet/provider/twilio"
@@ -28,24 +35,32 @@ type ReceiverConf struct {
 	To       []string
 	From     string
 	Text     string
+	Type     string
 }
 
 var config struct {
 	Providers struct {
-		MessageBird messagebird.MessageBirdConfig
-		Nexmo       nexmo.NexmoConfig
-		Twilio      twilio.TwilioConfig
-		Infobip     infobip.InfobipConfig
-		Exotel      exotel.ExotelConfig
-		CM          cm.CMConfig
-		Telegram    telegram.TelegramConfig
-		Turbosms    turbosms.TurbosmsConfig
-		OTC         otc.OTCConfig
-		MediaBurst  mediaburst.MediaBurstConfig
-		FreeMobile  freemobile.Config
-		AspSms      aspsms.Config
-		Sipgate     sipgate.Config
-		Kavenegar   kavenegar.Config
+		MessageBird  messagebird.MessageBirdConfig
+		Nexmo        nexmo.NexmoConfig
+		Twilio       twilio.TwilioConfig
+		Infobip      infobip.InfobipConfig
+		Kannel       kannel.KannelConfig
+		Exotel       exotel.ExotelConfig
+		CM           cm.CMConfig
+		Telegram     telegram.TelegramConfig
+		Turbosms     turbosms.TurbosmsConfig
+		Smsc         smsc.SmscConfig
+		OTC          otc.OTCConfig
+		MediaBurst   mediaburst.MediaBurstConfig
+		FreeMobile   freemobile.Config
+		AspSms       aspsms.Config
+		Sipgate      sipgate.Config
+		Pushbullet   pushbullet.Config
+		NowSms       nowsms.Config
+		Aliyun       aliyun.Config
+		OVH          ovh.Config
+		TencentCloud tencentcloud.Config
+		Kavenegar    kavenegar.Config
 	}
 
 	Receivers []ReceiverConf
